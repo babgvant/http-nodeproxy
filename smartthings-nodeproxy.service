@@ -1,0 +1,16 @@
+[Unit]
+Description=HTTP Node Proxy
+Requires=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+User=nobody
+Group=dialout
+EnvironmentFile=/etc/default/http-nodeproxy
+WorkingDirectory=/opt/local/http-nodeproxy
+ExecStart=/usr/local/bin/node /opt/local/http-nodeproxy/server.js
+
+[Install]
+WantedBy=multi-user.target
+

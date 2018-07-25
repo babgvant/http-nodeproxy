@@ -1,0 +1,28 @@
+{
+  "author": "andyvt@babgvant.com",
+  "name": "http-nodeproxy",
+  "version": "1.0.0",
+  "description": "HTTP Node Proxy",
+  "license": "ISC",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "bin": {
+    "smartthings-nodeproxy": "./server.js"
+  },
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "nconf": "^0.8.4",
+    "split": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "install:ad2usb": "npm install && npm install serialport@5.0.0",
+    "install:dash": "npm install && npm install cap",
+    "install:envisalink": "npm install",
+    "install:generic": "npm install",
+    "install:mpr-sg6z": "npm install && npm install serialport@5.0.0",
+    "install:rnet": "npm install && npm install serialport@5.0.0"
+  }
+}

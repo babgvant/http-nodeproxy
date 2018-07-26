@@ -10,7 +10,7 @@ npm install
 
 ## Config
 
-rename config.json.sample -> config.json and change accordingly
+rename config.json.eg -> config.json and change accordingly
 
 ##Ubuntu Service Install
 

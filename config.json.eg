@@ -22,6 +22,20 @@
         {"zone": 14, "type": "motion", "name": "Basement", "deviceId": "155"}
       ]
     }
+  },
+  "unifi-video": {
+    "host": "unifi video server ip",
+    "apiKey": "unif video api key",
+    "pollFrequency": 5000,
+    "cameras": [ --this will be autopopulated if empty, you just need to add the deviceId after
+      {
+        "name": "camera",
+        "model": "UVC G3 Micro",
+        "mac": "mac",
+        "address": "ip",
+        "deviceId": 157
+      }
+    ]
   },   
   "statusConfig": {    
       "baseUrl": "http://VERAIPADDRESS:3480/data_request?id=action&output_format=json&DeviceNum=",

@@ -7,7 +7,8 @@
     "port": "4025", --port to connect to, shouldn't need to change ever              
     "password": "user",  --envisalink password
     "securityCode": "1234", --passcode to arm/disarm panel
-    "dumpZoneTimer": "0", 
+    "dumpZoneTimer": "0",
+    "checkInterval": 60,
     "panelConfig": {              
       "type": "discover",
       "partitions": [

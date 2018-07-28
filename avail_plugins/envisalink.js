@@ -1,7 +1,8 @@
 /**
  *  Envisalink Vista TPI Plugin
  *
- *  Author: redloro@gmail.com
+ *  Original Author: redloro@gmail.com
+ *  Revision Author: andyvt@babgvant.com
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -148,6 +149,7 @@ function Envisalink () {
   var device = null;
   var deviceRequest = null;
   var deviceResponse = null;
+  var lastUpdate = 0;
   var responseHandler = function() {};
   var requestHandler = function(a, b, c) {
     deviceRequest = a;
@@ -169,7 +171,10 @@ function Envisalink () {
         return;
     }
 
-    if (device && device.writable) { return; }
+    let n = new Date() - lastUpdate;
+    logger(n);
+
+    if (device && device.writable && n < nconf.get('envisalink:checkInterval')*1000) { return; }
     if (device) { device.destroy(); }
 
     device = new net.Socket();
@@ -193,11 +198,15 @@ function Envisalink () {
 
     device.connect(nconf.get('envisalink:port'), nconf.get('envisalink:address'), function() {
       logger('Connected to Envisalink at '+nconf.get('envisalink:address')+':'+nconf.get('envisalink:port'));
+      
     });
   };
 
   // check connection every 60 secs
-  setInterval(function() { self.init(); }, 60*1000);
+  setInterval(function() { 
+    // logger('check');
+    self.init(); 
+  }, nconf.get('envisalink:checkInterval')*1000);
 
   // experimental: dump zone timers
   var zoneTimer = (nconf.get('envisalink:dumpZoneTimer')) ? parseInt(nconf.get('envisalink:dumpZoneTimer')) : 0;
@@ -278,7 +287,8 @@ function Envisalink () {
   }
 
   function keypad_update(data) {
-    //logger('Execute keypad_update: '+data);
+    // logger('Execute keypad_update: '+data);
+    lastUpdate = new Date();
 
     var map = data.split(',');
     if (map.length != 5 || data.indexOf('%') != -1) {

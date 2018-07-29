@@ -38,22 +38,22 @@
       }
     ]
   },   
-  "statusConfig": {    
-      "baseUrl": "http://VERAIPADDRESS:3480/data_request?id=action&output_format=json&DeviceNum=",
-      "motion": { 
-        "open":"&serviceId=urn:dcineco-com:serviceId:VMotion1&action=SetTripped",
-        "closed":"",
-        "status":"&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped"
-      },
-      "contact": { 
-        "open":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=0",
-        "closed":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=1",
-        "status":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&Variable=Status"
-      },
-      "panel": { 
-        "ready":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=1",
-        "notready":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=0",
-        "status":"&serviceId=urn:upnp-org:serviceId:SwitchPower1&Variable=Status"
-      }
+  "statusConfig": {
+    "baseUrl": "http://veraipaddress:3480/data_request?output_format=json&DeviceNum=",
+    "motion": {
+      "open": "&id=variableset&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped&Value=1",
+      "closed": "&id=variableset&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped&Value=0",
+      "status": "&id=variableget&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped"
+    },
+    "contact": {
+      "open": "&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=0",
+      "closed": "&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=1",
+      "status": "&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1&Variable=Status"
+    },
+    "panel": {
+      "ready": "&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=1",
+      "notready": "&id=action&serviceId=urn:upnp-org:serviceId:SwitchPower1&action=SetTarget&newTargetValue=0",
+      "status": "&id=variableget&serviceId=urn:upnp-org:serviceId:SwitchPower1&Variable=Status"
+    }
   }
 }

@@ -177,6 +177,8 @@ function Envisalink () {
     if (device && device.writable && n < nconf.get('envisalink:checkInterval')*1000) { return; }
     if (device) { device.destroy(); }
 
+    logger('Initialize Envisalink connection.');
+
     device = new net.Socket();
     device.on('error', function(err) {
       logger("Envisalink connection error: "+err.description);

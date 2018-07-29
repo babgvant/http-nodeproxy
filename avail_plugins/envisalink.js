@@ -172,7 +172,7 @@ function Envisalink () {
     }
 
     let n = new Date() - lastUpdate;
-    logger(n);
+    // logger(n);
 
     if (device && device.writable && n < nconf.get('envisalink:checkInterval')*1000) { return; }
     if (device) { device.destroy(); }

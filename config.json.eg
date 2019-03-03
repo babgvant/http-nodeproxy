@@ -24,6 +24,28 @@
       ]
     }
   },
+  "unifi-presence": {
+    "server": "server host name or IP",
+    "pollFrequency": 60000,
+    "siteIndex": 1, //0 if using the default site
+    "port": "8443",
+    "username": "",
+    "password" : "",
+    "mobiles" : [
+      {
+        "name": "Phone Name",
+        "mac": "00:00:00:00:00:00",
+        "deviceId": 265, //hubitat device id
+        "type": "presence" 
+      }
+      , {
+        "name": "Other Phone",
+        "mac": "", //if blank name is used to match 
+        "deviceId": 266,
+        "type": "presence" 
+      }
+    ]
+  },
   "unifi-video": {
     "host": "unifi video server ip",
     "apiKey": "unif video api key",
@@ -39,7 +61,13 @@
     ]
   },   
   "statusConfig": {
-    "baseUrl": "http://veraipaddress:3480/data_request?output_format=json&DeviceNum=",
+    //"baseUrl": "http://veraipaddress:3480/data_request?output_format=json&DeviceNum=",    
+    "baseUrl": "http://hubitatmakerapiurl",
+    "accesstoken": "?access_token=hubitataccesstoken",
+    "presence": {
+      "true" : "/arrived",
+      "false" : "/departed"
+    },
     "motion": {
       "open": "&id=variableset&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped&Value=1",
       "closed": "&id=variableset&serviceId=urn:micasaverde-com:serviceId:SecuritySensor1&Variable=Tripped&Value=0",

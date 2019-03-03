@@ -113,7 +113,7 @@ var notify = function(plugin, data) {
   if(data.update){
     let state = nconf.get(`statusConfig:${data.update.type}:${data.state}`);
     if(state && state != ''){
-      let url = `${nconf.get('statusConfig:baseUrl')}${data.update.deviceId}${state}`;
+      let url = `${nconf.get('statusConfig:baseUrl')}${data.update.deviceId}${state}${nconf.get('statusConfig:accesstoken')}`;
       logger(url);
       http.get(url, (resp) => {
         let data = '';

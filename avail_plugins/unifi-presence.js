@@ -34,7 +34,7 @@ var logger = function(str) {
  * Routes
  */
 app.get('/', function (req, res) {
-  res.status(200).json({ status: `Unifi-Presence plugin running\r\nConnected to Unifi version: ${uvc.sysinfo.version}` });
+  res.status(200).json({ status: `Unifi-Presence plugin running\r\nConnected to Unifi: ${nconf.get('unifi-presence:server')}:${nconf.get('unifi-presence:port')}` });
 });
 
 module.exports = function(f) {
@@ -57,7 +57,7 @@ if(pollFrequency && pollFrequency > 0) {
                 // GET SITE STATS 
                 controller.getSitesStats(function(err, sites) {
                     logger(`getSitesStats: ${sites[siteindex].name} : ${sites.length}`);
-                    // logger(sites);
+                    logger(sites);
                     if(err) {
                         logger(`ERROR: ${err}`);
                     } else {

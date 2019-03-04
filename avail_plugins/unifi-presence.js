@@ -37,6 +37,10 @@ app.get('/', function (req, res) {
   res.status(200).json({ status: `Unifi-Presence plugin running\r\nConnected to Unifi: ${nconf.get('unifi-presence:server')}:${nconf.get('unifi-presence:port')}` });
 });
 
+app.get('/mobiles', function (req, res) {
+    res.status(200).json(mobiles);
+  });
+
 module.exports = function(f) {
   notify = f;
   return app;
@@ -57,7 +61,7 @@ if(pollFrequency && pollFrequency > 0) {
                 // GET SITE STATS 
                 controller.getSitesStats(function(err, sites) {
                     logger(`getSitesStats: ${sites[siteindex].name} : ${sites.length}`);
-                    logger(sites);
+                    // logger(sites);
                     if(err) {
                         logger(`ERROR: ${err}`);
                     } else {

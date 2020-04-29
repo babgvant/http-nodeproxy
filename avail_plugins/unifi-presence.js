@@ -17,6 +17,7 @@ var app = express();
 var nconf = require('nconf');
 
 const unifi = require('node-unifi');
+// const unifi = require('../../node-unifi/unifi.js');
 let uvp = {
   sysinfo: {version:''}
 };
@@ -51,7 +52,7 @@ let pollFrequency = nconf.get('unifi-presence:pollFrequency');
 
 if(pollFrequency && pollFrequency > 0) {
     setInterval(function(){
-    let controller = new unifi.Controller(nconf.get('unifi-presence:server'), nconf.get('unifi-presence:port'));
+    let controller = new unifi.Controller(nconf.get('unifi-presence:server'), nconf.get('unifi-presence:port'), nconf.get('unifi-presence:isUDM'));
         controller.login(nconf.get('unifi-presence:username'), nconf.get('unifi-presence:password'), function(err) {
             if(err) {
                 logger(`ERROR: ${err}`);
@@ -78,7 +79,11 @@ if(pollFrequency && pollFrequency > 0) {
                                         if(mobile.mac && mobile.mac != ''){
                                             return mobile.mac == client.mac;
                                         } else {
-                                            return mobile.name == client.name;
+                                            let deviceName = client.name;
+                                            if(!deviceName){
+                                                deviceName = client.hostname;
+                                            }
+                                            return mobile.name == deviceName;
                                         }
                                     });
 

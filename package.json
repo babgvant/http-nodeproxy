@@ -13,7 +13,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.13.4",
-    "nconf": "^0.8.4",
+    "nconf": "^0.11.4",
     "node-unifi": "git+https://github.com/babgvant/node-unifi.git",
     "split": "^1.0.0"
   },

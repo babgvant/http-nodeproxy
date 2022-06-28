@@ -12,95 +12,84 @@
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  *  for the specific language governing permissions and limitations under the License.
  */
-var express = require('express');
-var app = express();
-var nconf = require('nconf');
-
-const unifi = require('node-unifi');
-// const unifi = require('../../node-unifi/unifi.js');
-let uvp = {
-  sysinfo: {version:''}
-};
-
-var notify;
-var logger = function(str) {
-  mod = 'uvp';
-  if(typeof str != "string"){
-    str = JSON.stringify(str);
-  }
-  console.log("[%s] [%s] %s", new Date().toISOString(), mod, str);
-}
-
-/**
- * Routes
- */
-app.get('/', function (req, res) {
-  res.status(200).json({ status: `Unifi-Presence plugin running\r\nConnected to Unifi: ${nconf.get('unifi-presence:server')}:${nconf.get('unifi-presence:port')}` });
-});
-
-app.get('/mobiles', function (req, res) {
-    res.status(200).json(mobiles);
-  });
-
-module.exports = function(f) {
-  notify = f;
-  return app;
-};
-
-let mobiles = nconf.get('unifi-presence:mobiles');
-let pollFrequency = nconf.get('unifi-presence:pollFrequency');
-
-if(pollFrequency && pollFrequency > 0) {
-    setInterval(function(){
-    let controller = new unifi.Controller(nconf.get('unifi-presence:server'), nconf.get('unifi-presence:port'), nconf.get('unifi-presence:isUDM'));
-        controller.login(nconf.get('unifi-presence:username'), nconf.get('unifi-presence:password'), function(err) {
-            if(err) {
-                logger(`ERROR: ${err}`);
-            } else {
-                var siteindex = nconf.get('unifi-presence:siteIndex');
-                logger(`working with index ${siteindex}`);
-                // GET SITE STATS 
-                controller.getSitesStats(function(err, sites) {
-                    logger(`getSitesStats: ${sites[siteindex].name} : ${sites.length}`);
-                    // logger(sites);
-                    if(err) {
-                        logger(`ERROR: ${err}`);
-                    } else {
-                        // GET CLIENT DEVICES 
-                        controller.getClientDevices(sites[siteindex].name, function(err, client_data) {
-                            
-                            if(err) {
-                                logger(`ERROR: ${err}`);
-                            } else {
-                                logger(`getClientDevices: ${client_data[0].length}`);
-                                // logger(client_data);
-                                mobiles.forEach(function(mobile) {
-                                    var found = client_data[0].filter(function (client) {
-                                        if(mobile.mac && mobile.mac != ''){
-                                            return mobile.mac == client.mac;
-                                        } else {
-                                            let deviceName = client.name;
-                                            if(!deviceName){
-                                                deviceName = client.hostname;
-                                            }
-                                            return mobile.name == deviceName;
-                                        }
-                                    });
-
-                                    mobile.present = (found.length > 0);
-                                                                    
-                                    let msg = {type: 'presence', state: mobile.present, update: mobile};
-                                    // logger(msg);
-                                    notify(msg);
-                                });
-                            }
-                            
-                            // FINALIZE, LOGOUT AND FINISH 
-                            controller.logout();
-                        });
-                    }
-                });
-            }
-        });
-    }, pollFrequency);
-}
+ var express = require('express');
+ var app = express();
+ var nconf = require('nconf');
+ 
+ const Unifi = require('node-unifi');
+ // const unifi = require('../../node-unifi/unifi.js');
+ let uvp = {
+   sysinfo: {version:''}
+ };
+ 
+ var notify;
+ var logger = function(str) {
+   mod = 'uvp';
+   if(typeof str != "string"){
+     str = JSON.stringify(str);
+   }
+   console.log("[%s] [%s] %s", new Date().toISOString(), mod, str);
+ }
+ 
+ /**
+  * Routes
+  */
+ app.get('/', function (req, res) {
+   res.status(200).json({ status: `Unifi-Presence plugin running\r\nConnected to Unifi: ${nconf.get('unifi-presence:server')}:${nconf.get('unifi-presence:port')}` });
+ });
+ 
+ app.get('/mobiles', function (req, res) {
+     res.status(200).json(mobiles);
+   });
+ 
+ module.exports = function(f) {
+   notify = f;
+   return app;
+ };
+ 
+ let mobiles = nconf.get('unifi-presence:mobiles');
+ let pollFrequency = nconf.get('unifi-presence:pollFrequency');
+ let host = nconf.get('unifi-presence:server');
+ let port = nconf.get('unifi-presence:port');
+ // let userName = 
+ 
+ if(pollFrequency && pollFrequency > 0) {
+     setInterval(function(){
+         const unifi = new Unifi.Controller({host, port, sslverify: false});
+         (async () => {
+             try {
+                 // LOGIN
+                 const loginData = await unifi.login(nconf.get('unifi-presence:username'), nconf.get('unifi-presence:password'));
+                 console.log('login: ' + loginData);
+             
+                 // GET CLIENT DEVICES
+                 const clientData = await unifi.getClientDevices();
+                 mobiles.forEach(function(mobile) {
+                     var found = clientData.filter(function (client) {
+                         if(mobile.mac && mobile.mac != ''){
+                             return mobile.mac == client.mac;
+                         } else {
+                             let deviceName = client.name;
+                             if(!deviceName){
+                                 deviceName = client.hostname;
+                             }
+                             return mobile.name == deviceName;
+                         }
+                     });
+ 
+                     mobile.present = (found.length > 0);
+                                                     
+                     let msg = {type: 'presence', state: mobile.present, update: mobile};
+                     // logger(msg);
+                     notify(msg);
+                 });
+ 
+                 // LOGOUT
+                 const logoutData = await unifi.logout();
+                 console.log('logout: ' + JSON.stringify(logoutData));
+             } catch (error) {
+                 console.log('ERROR: ' + error);
+             }
+         })();
+     }, pollFrequency);
+ }
